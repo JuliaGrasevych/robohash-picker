@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import Combine
+
 import SnapKit
 
 class RobohashView: UIView {
@@ -30,6 +32,8 @@ class RobohashView: UIView {
         return view
     }()
     
+    var subscriptions: [AnyCancellable] = []
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -47,5 +51,22 @@ class RobohashView: UIView {
         stackView.snp.makeConstraints { make in
             make.directionalEdges.equalToSuperview()
         }
+    }
+    
+    func update(with robohash: RobohashCreation) {
+        subscriptions.removeAll()
+        // TODO: present loading
+        robohash.image
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { completion in
+                    // TODO: handle error
+                },
+                receiveValue: { [weak self] image in
+                    self?.roboImage.image = image
+                }
+            )
+            .store(in: &subscriptions)
+        urlDescription.text = robohash.url.absoluteString
     }
 }

@@ -16,6 +16,8 @@
 		A3B54ADD2C73870C00BCBCF2 /* RobohashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54ADC2C73870C00BCBCF2 /* RobohashView.swift */; };
 		A3B54AE02C73886B00BCBCF2 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A3B54ADF2C73886B00BCBCF2 /* SnapKit */; };
 		A3B54AE52C738AE500BCBCF2 /* UIView+Spacer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AE42C738AE500BCBCF2 /* UIView+Spacer.swift */; };
+		A3B54AE72C738BE500BCBCF2 /* RobohashCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AE62C738BE500BCBCF2 /* RobohashCreation.swift */; };
+		A3B54AEA2C738FCB00BCBCF2 /* RobohashFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AE92C738FCB00BCBCF2 /* RobohashFetcher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +31,8 @@
 		A3B54AD42C73846300BCBCF2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A3B54ADC2C73870C00BCBCF2 /* RobohashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobohashView.swift; sourceTree = "<group>"; };
 		A3B54AE42C738AE500BCBCF2 /* UIView+Spacer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Spacer.swift"; sourceTree = "<group>"; };
+		A3B54AE62C738BE500BCBCF2 /* RobohashCreation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobohashCreation.swift; sourceTree = "<group>"; };
+		A3B54AE92C738FCB00BCBCF2 /* RobohashFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobohashFetcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +69,7 @@
 				A3B54AC62C73846200BCBCF2 /* AppDelegate.swift */,
 				A3B54AC82C73846200BCBCF2 /* SceneDelegate.swift */,
 				A3B54ACA2C73846200BCBCF2 /* ViewController.swift */,
+				A3B54AE82C738FBA00BCBCF2 /* Service */,
 				A3B54AE32C738ADA00BCBCF2 /* Extensions */,
 				A3B54ADB2C7386E700BCBCF2 /* RobohashView */,
 				A3B54ACC2C73846200BCBCF2 /* Main.storyboard */,
@@ -79,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				A3B54ADC2C73870C00BCBCF2 /* RobohashView.swift */,
+				A3B54AE62C738BE500BCBCF2 /* RobohashCreation.swift */,
 			);
 			path = RobohashView;
 			sourceTree = "<group>";
@@ -89,6 +95,14 @@
 				A3B54AE42C738AE500BCBCF2 /* UIView+Spacer.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		A3B54AE82C738FBA00BCBCF2 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				A3B54AE92C738FCB00BCBCF2 /* RobohashFetcher.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -170,9 +184,11 @@
 			files = (
 				A3B54AE52C738AE500BCBCF2 /* UIView+Spacer.swift in Sources */,
 				A3B54ACB2C73846200BCBCF2 /* ViewController.swift in Sources */,
+				A3B54AE72C738BE500BCBCF2 /* RobohashCreation.swift in Sources */,
 				A3B54AC72C73846200BCBCF2 /* AppDelegate.swift in Sources */,
 				A3B54ADD2C73870C00BCBCF2 /* RobohashView.swift in Sources */,
 				A3B54AC92C73846200BCBCF2 /* SceneDelegate.swift in Sources */,
+				A3B54AEA2C738FCB00BCBCF2 /* RobohashFetcher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
