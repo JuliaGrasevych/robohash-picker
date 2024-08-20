@@ -13,28 +13,45 @@ class ViewController: UIViewController {
     @IBOutlet weak var generateButton: UIButton!
     @IBOutlet weak var textField: UITextField!
     
-    // TODO: move all logic to view models
+    private let viewModel = RobohashViewModel()
+    private var subscriptions = Set<AnyCancellable>()
+    
     // TODO: add control to choose robohash set
     // TODO: add link to website
-    private let robohashFetcher = RobohashFetcher()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        connectViewModel()
     }
     
-    @IBAction func generate(_ sender: UIButton) {
-        // TODO: disable generate button when no test is entered
-        // TODO: hide keyboard on "return" or "generate"
-        guard let text = textField.text, !text.isEmpty else {
-            return
-        }
-        do {
-            let result = try robohashFetcher.fetchImage(for: text, set: .robot)
-            robohashView.update(with: result)
-        } catch {
-            print("error fetching: \(error.localizedDescription)")
-        }
+    private func connectViewModel() {
+        let input = RobohashViewModel.Input(
+            enteredText: textField.publisher(for: .editingChanged)
+                .map { ($0 as? UITextField)?.text }
+                .eraseToAnyPublisher(),
+            generateTap: generateButton.publisher(for: .touchUpInside)
+                .map { _ in }
+                .eraseToAnyPublisher()
+        )
+        let output = viewModel.bind(input)
+        
+        output.generateButtonEnabled
+            .assign(to: \.isEnabled, on: generateButton)
+            .store(in: &subscriptions)
+        output.robohashCreation
+            .sink(
+                receiveCompletion: { completion in
+                    // TODO: handle error
+                },
+                receiveValue: { [robohashView] result in
+                    robohashView?.update(with: result)
+                }
+            )
+            .store(in: &subscriptions)
     }
+    
+    // TODO: hide keyboard on "return" or "generate"
 }
+
 

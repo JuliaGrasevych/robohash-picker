@@ -14,12 +14,10 @@ class RobohashView: UIView {
     private let roboImage: UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFit
-        view.backgroundColor = .red
         return view
     }()
     private let urlDescription: UILabel = {
         let view = UILabel()
-        view.text = "Test"
         view.textAlignment = .center
         return view
     }()
@@ -32,7 +30,7 @@ class RobohashView: UIView {
         return view
     }()
     
-    var subscriptions: [AnyCancellable] = []
+    var subscriptions = Set<AnyCancellable>()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
