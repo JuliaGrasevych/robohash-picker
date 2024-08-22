@@ -20,16 +20,27 @@ class RobohashViewModel: ViewModelBinding {
         let enteredText: AnyPublisher<String?, Never>
         let generateTap: AnyPublisher<Void, Never>
         let copyrightTap: AnyPublisher<Void, Never>
+        let selectedSetIndex: AnyPublisher<Int, Never>
     }
     struct Output {
         let generateButtonEnabled: AnyPublisher<Bool, Never>
         let robohashCreation: AnyPublisher<RobohashCreation, Error>
         let openURL: AnyPublisher<URL, Never>
+        let setOptions: AnyPublisher<[String], Never>
     }
     
     private let robohashFetcher = RobohashFetcher()
     
     func bind(_ input: Input) -> Output {
+        let setOptions = Just(RobohashSet.allCases)
+            .eraseToAnyPublisher()
+        let setOptionsNames = setOptions
+            .map { $0.map(\.name) }
+            .eraseToAnyPublisher()
+        
+        let selectedSet = setOptions.combineLatest(input.selectedSetIndex)
+            .compactMap { $0[safe: $1] }
+        
         let robohashResult = input.generateTap
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .withLatestFrom(input.enteredText)
@@ -39,9 +50,10 @@ class RobohashViewModel: ViewModelBinding {
                 }
                 return text
             }
-            .tryMap { [robohashFetcher] text in
+            .withLatestFrom(selectedSet)
+            .tryMap { [robohashFetcher] text, setOption in
                 do {
-                    return try robohashFetcher.fetchImage(for: text, set: .robot)
+                    return try robohashFetcher.fetchImage(for: text, set: setOption)
                 } catch {
                     throw error
                 }
@@ -62,7 +74,25 @@ class RobohashViewModel: ViewModelBinding {
         return Output(
             generateButtonEnabled: generateButtonEnabled,
             robohashCreation: robohashResult,
-            openURL: copyrightURL
+            openURL: copyrightURL,
+            setOptions: setOptionsNames
         )
+    }
+}
+
+private extension RobohashSet {
+    var name: String {
+        switch self {
+        case .robot:
+            return "Robot"
+        case .monster:
+            return "Monster"
+        case .robotsHead:
+            return "Robohead"
+        case .kitten:
+            return "Kitten"
+        case .human:
+            return "Human"
+        }
     }
 }

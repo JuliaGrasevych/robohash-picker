@@ -13,6 +13,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var generateButton: UIButton!
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var copyright: UIButton!
+    @IBOutlet weak var setControl: UISegmentedControl!
+    
+    private let setControlSubject = PassthroughSubject<Int, Never>()
     
     private let viewModel = RobohashViewModel()
     private let application = UIApplication.shared
@@ -34,6 +37,14 @@ class ViewController: UIViewController {
             .mapVoid()
             .share()
             .eraseToAnyPublisher()
+        let selectedSet = setControlSubject
+            .eraseToAnyPublisher()
+            .merge(with: setControl.publisher(for: .valueChanged)
+                .map { $0.selectedSegmentIndex }
+                .eraseToAnyPublisher()
+            )
+            .eraseToAnyPublisher()
+        
         // dismiss keyboard when tap 'generate'
         generateButtonDidTap
             .sink { [textField] _ in
@@ -49,7 +60,8 @@ class ViewController: UIViewController {
                 .eraseToAnyPublisher(),
             copyrightTap: copyright.publisher(for: .touchUpInside)
                 .mapVoid()
-                .eraseToAnyPublisher()
+                .eraseToAnyPublisher(),
+            selectedSetIndex: selectedSet
         )
         let output = viewModel.bind(input)
         
@@ -71,7 +83,21 @@ class ViewController: UIViewController {
                 application.open(url)
             }
             .store(in: &subscriptions)
+        
+        output.setOptions
+            .sink { [weak self] options in
+                self?.updateSetOptions(options)
+            }
+            .store(in: &subscriptions)
+    }
+    
+    private func updateSetOptions(_ options: [String]) {
+        setControl.removeAllSegments()
+        guard !options.isEmpty else { return }
+        options.enumerated().forEach { index, option in
+            setControl.insertSegment(withTitle: option, at: index, animated: false)
+        }
+        setControl.selectedSegmentIndex = 0
+        setControlSubject.send(0)
     }
 }
-
-

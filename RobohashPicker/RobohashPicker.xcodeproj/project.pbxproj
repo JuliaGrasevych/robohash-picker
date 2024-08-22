@@ -22,6 +22,7 @@
 		A3B54AEE2C74E3B200BCBCF2 /* RobohashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AED2C74E3B200BCBCF2 /* RobohashViewModel.swift */; };
 		A3B54AF02C74E8FF00BCBCF2 /* Publishers+WithLatestFrom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AEF2C74E8FF00BCBCF2 /* Publishers+WithLatestFrom.swift */; };
 		A3B54AF22C7776DC00BCBCF2 /* Publisher+MapVoid.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AF12C7776DC00BCBCF2 /* Publisher+MapVoid.swift */; };
+		A3B54AF42C7789DA00BCBCF2 /* Collection+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AF32C7789DA00BCBCF2 /* Collection+SafeSubscript.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		A3B54AED2C74E3B200BCBCF2 /* RobohashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobohashViewModel.swift; sourceTree = "<group>"; };
 		A3B54AEF2C74E8FF00BCBCF2 /* Publishers+WithLatestFrom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publishers+WithLatestFrom.swift"; sourceTree = "<group>"; };
 		A3B54AF12C7776DC00BCBCF2 /* Publisher+MapVoid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+MapVoid.swift"; sourceTree = "<group>"; };
+		A3B54AF32C7789DA00BCBCF2 /* Collection+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+SafeSubscript.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				A3B54AE42C738AE500BCBCF2 /* UIView+Spacer.swift */,
+				A3B54AF32C7789DA00BCBCF2 /* Collection+SafeSubscript.swift */,
 				A3B54AEB2C74D83200BCBCF2 /* UIControl+Combine.swift */,
 				A3B54AEF2C74E8FF00BCBCF2 /* Publishers+WithLatestFrom.swift */,
 				A3B54AF12C7776DC00BCBCF2 /* Publisher+MapVoid.swift */,
@@ -204,6 +207,7 @@
 				A3B54ADD2C73870C00BCBCF2 /* RobohashView.swift in Sources */,
 				A3B54AC92C73846200BCBCF2 /* SceneDelegate.swift in Sources */,
 				A3B54AEA2C738FCB00BCBCF2 /* RobohashFetcher.swift in Sources */,
+				A3B54AF42C7789DA00BCBCF2 /* Collection+SafeSubscript.swift in Sources */,
 				A3B54AF02C74E8FF00BCBCF2 /* Publishers+WithLatestFrom.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
