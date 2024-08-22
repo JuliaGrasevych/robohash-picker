@@ -19,10 +19,12 @@ class RobohashViewModel: ViewModelBinding {
     struct Input {
         let enteredText: AnyPublisher<String?, Never>
         let generateTap: AnyPublisher<Void, Never>
+        let copyrightTap: AnyPublisher<Void, Never>
     }
     struct Output {
         let generateButtonEnabled: AnyPublisher<Bool, Never>
         let robohashCreation: AnyPublisher<RobohashCreation, Error>
+        let openURL: AnyPublisher<URL, Never>
     }
     
     private let robohashFetcher = RobohashFetcher()
@@ -53,9 +55,14 @@ class RobohashViewModel: ViewModelBinding {
             .prepend(Just(false))
             .eraseToAnyPublisher()
         
+        let copyrightURL = input.copyrightTap
+            .compactMap { URL(string: "https://robohash.org/") }
+            .eraseToAnyPublisher()
+        
         return Output(
             generateButtonEnabled: generateButtonEnabled,
-            robohashCreation: robohashResult
+            robohashCreation: robohashResult,
+            openURL: copyrightURL
         )
     }
 }

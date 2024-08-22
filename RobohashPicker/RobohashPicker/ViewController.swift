@@ -12,12 +12,13 @@ class ViewController: UIViewController {
     @IBOutlet weak var robohashView: RobohashView!
     @IBOutlet weak var generateButton: UIButton!
     @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var copyright: UIButton!
     
     private let viewModel = RobohashViewModel()
+    private let application = UIApplication.shared
     private var subscriptions = Set<AnyCancellable>()
     
     // TODO: add control to choose robohash set
-    // TODO: add link to website
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,12 +27,28 @@ class ViewController: UIViewController {
     }
     
     private func connectViewModel() {
+        let returnKeyDidTap = textField.publisher(for: .editingDidEndOnExit)
+            .mapVoid()
+            .eraseToAnyPublisher()
+        let generateButtonDidTap = generateButton.publisher(for: .touchUpInside)
+            .mapVoid()
+            .share()
+            .eraseToAnyPublisher()
+        // dismiss keyboard when tap 'generate'
+        generateButtonDidTap
+            .sink { [textField] _ in
+                textField?.resignFirstResponder()
+            }
+            .store(in: &subscriptions)
+        
         let input = RobohashViewModel.Input(
             enteredText: textField.publisher(for: .editingChanged)
-                .map { ($0 as? UITextField)?.text }
+                .map { $0.text }
                 .eraseToAnyPublisher(),
-            generateTap: generateButton.publisher(for: .touchUpInside)
-                .map { _ in }
+            generateTap: returnKeyDidTap.merge(with: generateButtonDidTap)
+                .eraseToAnyPublisher(),
+            copyrightTap: copyright.publisher(for: .touchUpInside)
+                .mapVoid()
                 .eraseToAnyPublisher()
         )
         let output = viewModel.bind(input)
@@ -49,9 +66,12 @@ class ViewController: UIViewController {
                 }
             )
             .store(in: &subscriptions)
+        output.openURL
+            .sink { [application] url in
+                application.open(url)
+            }
+            .store(in: &subscriptions)
     }
-    
-    // TODO: hide keyboard on "return" or "generate"
 }
 
 

@@ -8,38 +8,42 @@
 import UIKit
 import Combine
 
-extension UIControl {
-    struct EventControlPublisher: Publisher {
-        typealias Output = UIControl
-        typealias Failure = Never
-        
-        let control: UIControl
-        let controlEvent: UIControl.Event
-        
-        func receive<S>(subscriber: S) where S: Subscriber, Never == S.Failure, UIControl == S.Input {
-            let subscription = Subscription(
-                control: control,
-                event: controlEvent,
-                subscriber: subscriber
-            )
-            subscriber.receive(subscription: subscription)
-        }
-    }
-    
-    func publisher(for event: UIControl.Event) -> EventControlPublisher {
+protocol CombineCompatible { }
+
+extension UIControl: CombineCompatible { }
+
+extension CombineCompatible where Self: UIControl {
+    func publisher(for event: UIControl.Event) -> EventControlPublisher<Self> {
         return EventControlPublisher(control: self, controlEvent: event)
     }
 }
 
-private extension UIControl.EventControlPublisher {
-    class Subscription<EventSubscriber: Subscriber>: Combine.Subscription where EventSubscriber.Input == UIControl, EventSubscriber.Failure == Never {
-        let control: UIControl
+struct EventControlPublisher<T: UIControl>: Publisher {
+    typealias Output = T
+    typealias Failure = Never
+    
+    let control: T
+    let controlEvent: UIControl.Event
+    
+    func receive<S>(subscriber: S) where S: Subscriber, Never == S.Failure, T == S.Input {
+        let subscription = Subscription(
+            control: control,
+            event: controlEvent,
+            subscriber: subscriber
+        )
+        subscriber.receive(subscription: subscription)
+    }
+}
+
+private extension EventControlPublisher {
+    class Subscription<EventSubscriber: Subscriber, Control: UIControl>: Combine.Subscription where EventSubscriber.Input == Control, EventSubscriber.Failure == Never {
+        let control: Control
         let event: UIControl.Event
         var subscriber: EventSubscriber?
         
         var currentDemand: Subscribers.Demand = .none
         
-        init(control: UIControl, event: UIControl.Event, subscriber: EventSubscriber) {
+        init(control: Control, event: UIControl.Event, subscriber: EventSubscriber) {
             self.control = control
             self.subscriber = subscriber
             self.event = event

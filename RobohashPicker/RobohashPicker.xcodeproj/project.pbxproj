@@ -21,6 +21,7 @@
 		A3B54AEC2C74D83200BCBCF2 /* UIControl+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AEB2C74D83200BCBCF2 /* UIControl+Combine.swift */; };
 		A3B54AEE2C74E3B200BCBCF2 /* RobohashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AED2C74E3B200BCBCF2 /* RobohashViewModel.swift */; };
 		A3B54AF02C74E8FF00BCBCF2 /* Publishers+WithLatestFrom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AEF2C74E8FF00BCBCF2 /* Publishers+WithLatestFrom.swift */; };
+		A3B54AF22C7776DC00BCBCF2 /* Publisher+MapVoid.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B54AF12C7776DC00BCBCF2 /* Publisher+MapVoid.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		A3B54AEB2C74D83200BCBCF2 /* UIControl+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+Combine.swift"; sourceTree = "<group>"; };
 		A3B54AED2C74E3B200BCBCF2 /* RobohashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobohashViewModel.swift; sourceTree = "<group>"; };
 		A3B54AEF2C74E8FF00BCBCF2 /* Publishers+WithLatestFrom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publishers+WithLatestFrom.swift"; sourceTree = "<group>"; };
+		A3B54AF12C7776DC00BCBCF2 /* Publisher+MapVoid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+MapVoid.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 				A3B54AE42C738AE500BCBCF2 /* UIView+Spacer.swift */,
 				A3B54AEB2C74D83200BCBCF2 /* UIControl+Combine.swift */,
 				A3B54AEF2C74E8FF00BCBCF2 /* Publishers+WithLatestFrom.swift */,
+				A3B54AF12C7776DC00BCBCF2 /* Publisher+MapVoid.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -194,6 +197,7 @@
 				A3B54AE52C738AE500BCBCF2 /* UIView+Spacer.swift in Sources */,
 				A3B54AEC2C74D83200BCBCF2 /* UIControl+Combine.swift in Sources */,
 				A3B54ACB2C73846200BCBCF2 /* ViewController.swift in Sources */,
+				A3B54AF22C7776DC00BCBCF2 /* Publisher+MapVoid.swift in Sources */,
 				A3B54AEE2C74E3B200BCBCF2 /* RobohashViewModel.swift in Sources */,
 				A3B54AE72C738BE500BCBCF2 /* RobohashCreation.swift in Sources */,
 				A3B54AC72C73846200BCBCF2 /* AppDelegate.swift in Sources */,

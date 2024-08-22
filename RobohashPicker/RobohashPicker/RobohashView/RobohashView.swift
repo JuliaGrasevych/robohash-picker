@@ -19,6 +19,7 @@ class RobohashView: UIView {
     private let urlDescription: UILabel = {
         let view = UILabel()
         view.textAlignment = .center
+        view.lineBreakMode = .byTruncatingMiddle
         return view
     }()
     private let stackView: UIStackView = {
