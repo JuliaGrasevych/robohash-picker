@@ -21,8 +21,6 @@ class ViewController: UIViewController {
     private let application = UIApplication.shared
     private var subscriptions = Set<AnyCancellable>()
     
-    // TODO: add control to choose robohash set
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -69,14 +67,10 @@ class ViewController: UIViewController {
             .assign(to: \.isEnabled, on: generateButton)
             .store(in: &subscriptions)
         output.robohashCreation
-            .sink(
-                receiveCompletion: { completion in
-                    // TODO: handle error
-                },
-                receiveValue: { [robohashView] result in
-                    robohashView?.update(with: result)
-                }
-            )
+            .receive(on: DispatchQueue.main)
+            .sink { [robohashView] result in
+                robohashView?.update(with: result)
+            }
             .store(in: &subscriptions)
         output.openURL
             .sink { [application] url in
@@ -89,6 +83,12 @@ class ViewController: UIViewController {
                 self?.updateSetOptions(options)
             }
             .store(in: &subscriptions)
+        
+        output.errorAlert
+            .sink { [weak self] errorMessage in
+                self?.showAlert(message: errorMessage)
+            }
+            .store(in: &subscriptions)
     }
     
     private func updateSetOptions(_ options: [String]) {
@@ -99,5 +99,16 @@ class ViewController: UIViewController {
         }
         setControl.selectedSegmentIndex = 0
         setControlSubject.send(0)
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(
+            title: nil,
+            message: message,
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "Ok", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
 }

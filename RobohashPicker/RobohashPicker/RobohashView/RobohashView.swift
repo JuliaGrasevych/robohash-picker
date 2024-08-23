@@ -30,8 +30,13 @@ class RobohashView: UIView {
         view.spacing = 6
         return view
     }()
-    
-    var subscriptions = Set<AnyCancellable>()
+    private let loader: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .large)
+        view.tintColor = .black
+        view.hidesWhenStopped = true
+        view.stopAnimating()
+        return view
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,22 +55,27 @@ class RobohashView: UIView {
         stackView.snp.makeConstraints { make in
             make.directionalEdges.equalToSuperview()
         }
+        addSubview(loader)
+        loader.snp.makeConstraints { make in
+            make.center.equalTo(stackView)
+        }
     }
     
     func update(with robohash: RobohashCreation) {
-        subscriptions.removeAll()
-        // TODO: present loading
-        robohash.image
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { completion in
-                    // TODO: handle error
-                },
-                receiveValue: { [weak self] image in
-                    self?.roboImage.image = image
-                }
-            )
-            .store(in: &subscriptions)
+        switch robohash.image {
+        case .loading:
+            loader.startAnimating()
+            roboImage.alpha = 0.5
+        case .loaded(let image):
+            loader.stopAnimating()
+            roboImage.image = image
+            roboImage.alpha = 1.0
+        case .failed(let error):
+            // TODO: show error
+            loader.stopAnimating()
+            roboImage.image = nil
+            roboImage.alpha = 1.0
+        }
         urlDescription.text = robohash.url.absoluteString
     }
 }

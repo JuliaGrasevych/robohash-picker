@@ -10,6 +10,11 @@ import Combine
 import UIKit
 
 struct RobohashCreation {
-    let image: AnyPublisher<UIImage, Error>
+    enum ImageContent {
+        case loading
+        case loaded(UIImage)
+        case failed(Error)
+    }
+    let image: ImageContent
     let url: URL
 }

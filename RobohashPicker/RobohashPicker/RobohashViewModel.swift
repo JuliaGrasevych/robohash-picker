@@ -24,9 +24,10 @@ class RobohashViewModel: ViewModelBinding {
     }
     struct Output {
         let generateButtonEnabled: AnyPublisher<Bool, Never>
-        let robohashCreation: AnyPublisher<RobohashCreation, Error>
+        let robohashCreation: AnyPublisher<RobohashCreation, Never>
         let openURL: AnyPublisher<URL, Never>
         let setOptions: AnyPublisher<[String], Never>
+        let errorAlert: AnyPublisher<String, Never>
     }
     
     private let robohashFetcher = RobohashFetcher()
@@ -41,7 +42,7 @@ class RobohashViewModel: ViewModelBinding {
         let selectedSet = setOptions.combineLatest(input.selectedSetIndex)
             .compactMap { $0[safe: $1] }
         
-        let robohashResult = input.generateTap
+        let robohashRequest = input.generateTap
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .withLatestFrom(input.enteredText)
             .compactMap { _, textInput -> String? in
@@ -51,12 +52,26 @@ class RobohashViewModel: ViewModelBinding {
                 return text
             }
             .withLatestFrom(selectedSet)
-            .tryMap { [robohashFetcher] text, setOption in
-                do {
-                    return try robohashFetcher.fetchImage(for: text, set: setOption)
-                } catch {
-                    throw error
-                }
+            .removeDuplicates(by: { $0 == $1 })
+            .map { [robohashFetcher] text, setOption in
+                robohashFetcher.fetchImage(for: text, set: setOption)
+                    .map(Result.success)
+                    .catch { Just(.failure($0)) }
+            }
+            .switchToLatest() // switchToLatest to cancel previous request
+            .share()
+        
+        let robohashResult = robohashRequest
+            .compactMap { result -> RobohashCreation? in
+                guard case let .success(creation) = result else { return nil }
+                return creation
+            }
+            .eraseToAnyPublisher()
+        
+        let robohashRequestError = robohashRequest
+            .compactMap { result -> String? in
+                guard case let .failure(error) = result else { return nil }
+                return error.localizedDescription
             }
             .eraseToAnyPublisher()
         
@@ -75,7 +90,8 @@ class RobohashViewModel: ViewModelBinding {
             generateButtonEnabled: generateButtonEnabled,
             robohashCreation: robohashResult,
             openURL: copyrightURL,
-            setOptions: setOptionsNames
+            setOptions: setOptionsNames,
+            errorAlert: robohashRequestError
         )
     }
 }

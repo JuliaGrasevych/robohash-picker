@@ -38,35 +38,63 @@ enum RobohashError: Error {
     case invalidImage
 }
 
+extension RobohashError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .failedToRequest:
+            return "Failed to create Robohash request"
+        case .invalidImage:
+            return "Failed to retrieve Robohash image"
+        }
+    }
+}
+
 protocol RobohashFetching {
-    func fetchImage(for text: String, set: RobohashSet) throws -> RobohashCreation
+    func fetchImage(for text: String, set: RobohashSet) -> AnyPublisher<RobohashCreation, Error>
 }
 
 class RobohashFetcher: RobohashFetching {
-    func fetchImage(for text: String, set: RobohashSet) throws -> RobohashCreation {
+    func fetchImage(for text: String, set: RobohashSet) -> AnyPublisher<RobohashCreation, Error> {
+#warning("Test values")
+        if text == "fail" {
+            return Fail(error: RobohashError.failedToRequest)
+                .eraseToAnyPublisher()
+        }
         guard var urlComponents = URLComponents(string: "https://robohash.org") else {
-            throw RobohashError.failedToRequest
+            return Fail(error: RobohashError.failedToRequest)
+                .eraseToAnyPublisher()
         }
         urlComponents.path = "/\(text)"
         if let setURLParameter = set.urlParameter {
             urlComponents.queryItems = [URLQueryItem(name: "set", value: setURLParameter)]
         }
         guard let url = urlComponents.url else {
-            throw RobohashError.failedToRequest
+            return Fail(error: RobohashError.failedToRequest)
+                .eraseToAnyPublisher()
         }
         
         let task = URLSession.shared.dataTaskPublisher(for: url)
-        
-        return RobohashCreation(
-            image: task
-                .tryMap { data, response in
-                    guard let image = UIImage(data: data) else {
-                        throw RobohashError.invalidImage
-                    }
-                    return image
+        return task
+            .tryMap { data, response in
+#warning("Test values")
+                if text == "img" {
+                    return RobohashCreation(
+                        image: .failed(RobohashError.invalidImage),
+                        url: url
+                    )
                 }
-                .eraseToAnyPublisher(),
-            url: url
-        )
+                guard let image = UIImage(data: data) else {
+                    return RobohashCreation(
+                        image: .failed(RobohashError.invalidImage),
+                        url: url
+                    )
+                }
+                return RobohashCreation(
+                    image: .loaded(image),
+                    url: url
+                )
+            }
+            .prepend(RobohashCreation(image: .loading, url: url))
+            .eraseToAnyPublisher()
     }
 }

@@ -8,8 +8,6 @@
 import Foundation
 import Combine
 
-// TODO: add comments
-
 enum Either<Left, Right> {
     case left(Left)
     case right(Right)
@@ -62,7 +60,8 @@ private extension Publishers.WithLatestFrom {
     private func resultStream(from mergedStream: AnyPublisher<MergedElement, Failure>) -> some Publisher<Output, Failure> {
         mergedStream.scan((nil, nil, false) as ScanOutput) { prev, mergedElement in
             var output = prev
-            
+            // for each element detect if it's from the upstream or the second stream
+            // and update output for next 'scan' iteration
             switch mergedElement {
             case .left(let value):
                 output.left = value
@@ -74,6 +73,7 @@ private extension Publishers.WithLatestFrom {
             return output
         }
         .compactMap { result -> Output? in
+            // send output through only if upstream has produced the output
             guard
                 result.shouldEmit,
                 let left = result.left,
