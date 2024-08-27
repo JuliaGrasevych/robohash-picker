@@ -37,6 +37,12 @@ class RobohashView: UIView {
         view.stopAnimating()
         return view
     }()
+    private let errorDescription: UILabel = {
+        let view = UILabel()
+        view.textAlignment = .center
+        view.numberOfLines = 0
+        return view
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -49,7 +55,7 @@ class RobohashView: UIView {
     }
     
     private func setupViews() {
-        [roboImage, .spacer(), urlDescription].forEach(stackView.addArrangedSubview)
+        [errorDescription, roboImage, .spacer(), urlDescription].forEach(stackView.addArrangedSubview)
         
         addSubview(stackView)
         stackView.snp.makeConstraints { make in
@@ -59,19 +65,23 @@ class RobohashView: UIView {
         loader.snp.makeConstraints { make in
             make.center.equalTo(stackView)
         }
+        errorDescription.text = "Robohash generated image will be here :)"
     }
     
     func update(with robohash: RobohashCreation) {
         switch robohash.image {
         case .loading:
+            errorDescription.isHidden = true
             loader.startAnimating()
             roboImage.alpha = 0.5
         case .loaded(let image):
+            errorDescription.isHidden = true
             loader.stopAnimating()
             roboImage.image = image
             roboImage.alpha = 1.0
         case .failed(let error):
-            // TODO: show error
+            errorDescription.isHidden = false
+            errorDescription.text = error.localizedDescription
             loader.stopAnimating()
             roboImage.image = nil
             roboImage.alpha = 1.0

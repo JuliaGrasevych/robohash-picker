@@ -55,11 +55,6 @@ protocol RobohashFetching {
 
 class RobohashFetcher: RobohashFetching {
     func fetchImage(for text: String, set: RobohashSet) -> AnyPublisher<RobohashCreation, Error> {
-#warning("Test values")
-        if text == "fail" {
-            return Fail(error: RobohashError.failedToRequest)
-                .eraseToAnyPublisher()
-        }
         guard var urlComponents = URLComponents(string: "https://robohash.org") else {
             return Fail(error: RobohashError.failedToRequest)
                 .eraseToAnyPublisher()
@@ -76,13 +71,6 @@ class RobohashFetcher: RobohashFetching {
         let task = URLSession.shared.dataTaskPublisher(for: url)
         return task
             .tryMap { data, response in
-#warning("Test values")
-                if text == "img" {
-                    return RobohashCreation(
-                        image: .failed(RobohashError.invalidImage),
-                        url: url
-                    )
-                }
                 guard let image = UIImage(data: data) else {
                     return RobohashCreation(
                         image: .failed(RobohashError.invalidImage),
@@ -93,7 +81,7 @@ class RobohashFetcher: RobohashFetching {
                     image: .loaded(image),
                     url: url
                 )
-            }
+            } 
             .prepend(RobohashCreation(image: .loading, url: url))
             .eraseToAnyPublisher()
     }
