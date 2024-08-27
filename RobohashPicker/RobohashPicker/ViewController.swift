@@ -38,7 +38,7 @@ class ViewController: UIViewController {
         let selectedSet = setControlSubject
             .eraseToAnyPublisher()
             .merge(with: setControl.publisher(for: .valueChanged)
-                .map { $0.selectedSegmentIndex }
+                .map(\.selectedSegmentIndex)
                 .eraseToAnyPublisher()
             )
             .eraseToAnyPublisher()
@@ -52,7 +52,7 @@ class ViewController: UIViewController {
         
         let input = RobohashViewModel.Input(
             enteredText: textField.publisher(for: .editingChanged)
-                .map { $0.text }
+                .map(\.text)
                 .eraseToAnyPublisher(),
             generateTap: returnKeyDidTap.merge(with: generateButtonDidTap)
                 .eraseToAnyPublisher(),
@@ -64,6 +64,7 @@ class ViewController: UIViewController {
         let output = viewModel.bind(input)
         
         output.generateButtonEnabled
+            .receive(on: DispatchQueue.main)
             .assign(to: \.isEnabled, on: generateButton)
             .store(in: &subscriptions)
         output.robohashCreation
@@ -73,18 +74,21 @@ class ViewController: UIViewController {
             }
             .store(in: &subscriptions)
         output.openURL
+            .receive(on: DispatchQueue.main)
             .sink { [application] url in
                 application.open(url)
             }
             .store(in: &subscriptions)
         
         output.setOptions
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] options in
                 self?.updateSetOptions(options)
             }
             .store(in: &subscriptions)
         
         output.errorAlert
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] errorMessage in
                 self?.showAlert(message: errorMessage)
             }
