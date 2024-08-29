@@ -11,6 +11,7 @@ import Combine
 class ViewController: UIViewController {
     @IBOutlet weak var robohashView: RobohashView!
     @IBOutlet weak var generateButton: UIButton!
+    @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var copyright: UIButton!
     @IBOutlet weak var setControl: UISegmentedControl!
@@ -56,6 +57,9 @@ class ViewController: UIViewController {
                 .eraseToAnyPublisher(),
             generateTap: returnKeyDidTap.merge(with: generateButtonDidTap)
                 .eraseToAnyPublisher(),
+            saveTap: saveButton.publisher(for: .touchUpInside)
+                .mapVoid()
+                .eraseToAnyPublisher(),
             copyrightTap: copyright.publisher(for: .touchUpInside)
                 .mapVoid()
                 .eraseToAnyPublisher(),
@@ -66,6 +70,10 @@ class ViewController: UIViewController {
         output.generateButtonEnabled
             .receive(on: DispatchQueue.main)
             .assign(to: \.isEnabled, on: generateButton)
+            .store(in: &subscriptions)
+        output.saveButtonEnabled
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.isEnabled, on: saveButton)
             .store(in: &subscriptions)
         output.robohashCreation
             .receive(on: DispatchQueue.main)
@@ -93,6 +101,10 @@ class ViewController: UIViewController {
                 self?.showAlert(message: errorMessage)
             }
             .store(in: &subscriptions)
+        
+        output.subscriptions.forEach {
+            $0.store(in: &subscriptions)
+        }
     }
     
     private func updateSetOptions(_ options: [String]) {

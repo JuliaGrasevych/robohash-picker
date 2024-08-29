@@ -51,7 +51,7 @@
                                         </state>
                                     </button>
                                     <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="7Z3-Tq-Ubc">
-                                        <rect key="frame" x="0.0" y="38.333333333333314" width="377" height="32"/>
+                                        <rect key="frame" x="0.0" y="38.333333333333329" width="377" height="32"/>
                                         <segments>
                                             <segment title="First"/>
                                             <segment title="Second"/>
@@ -67,8 +67,25 @@
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="Generate"/>
                                     </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cr3-e7-6oi">
+                                        <rect key="frame" x="0.0" y="161.66666666666666" width="377" height="34.333333333333343"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mea-Eu-ZL7">
+                                                <rect key="frame" x="328.66666666666669" y="0.0" width="48.333333333333314" height="34.333333333333336"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" image="square.and.arrow.down" catalog="system"/>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstItem="Mea-Eu-ZL7" firstAttribute="top" secondItem="Cr3-e7-6oi" secondAttribute="top" id="7E4-Rg-Oar"/>
+                                            <constraint firstAttribute="bottom" secondItem="Mea-Eu-ZL7" secondAttribute="bottom" id="P9y-T3-6mU"/>
+                                            <constraint firstAttribute="trailing" secondItem="Mea-Eu-ZL7" secondAttribute="trailing" id="Q3x-1c-ChZ"/>
+                                            <constraint firstItem="Mea-Eu-ZL7" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Cr3-e7-6oi" secondAttribute="leading" id="bbc-qG-Yag"/>
+                                        </constraints>
+                                    </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wdo-Kw-mdh" customClass="RobohashView" customModule="RobohashPicker" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="161.66666666666669" width="377" height="529.33333333333326"/>
+                                        <rect key="frame" x="0.0" y="204" width="377" height="487"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
@@ -87,6 +104,7 @@
                         <outlet property="copyright" destination="Vb2-XZ-Ak7" id="gaH-N4-taJ"/>
                         <outlet property="generateButton" destination="KXw-GZ-ifP" id="f3E-kT-Oje"/>
                         <outlet property="robohashView" destination="wdo-Kw-mdh" id="3Ek-Uz-9vM"/>
+                        <outlet property="saveButton" destination="Mea-Eu-ZL7" id="r1O-uU-pYZ"/>
                         <outlet property="setControl" destination="7Z3-Tq-Ubc" id="R3e-ae-bLo"/>
                         <outlet property="textField" destination="xg6-pp-6ga" id="J7f-2Q-KTn"/>
                     </connections>
@@ -96,4 +114,7 @@
             <point key="canvasLocation" x="140" y="19"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="square.and.arrow.down" catalog="system" width="112" height="128"/>
+    </resources>
 </document>
