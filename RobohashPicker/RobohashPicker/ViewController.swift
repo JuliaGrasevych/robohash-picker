@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var copyright: UIButton!
     @IBOutlet weak var setControl: UISegmentedControl!
+    @IBOutlet weak var savedLabel: UILabel!
     
     private let setControlSubject = PassthroughSubject<Int, Never>()
     
@@ -24,7 +25,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        savedLabelVisibility(false)
         connectViewModel()
     }
     
@@ -102,6 +103,13 @@ class ViewController: UIViewController {
             }
             .store(in: &subscriptions)
         
+        output.savedAlert
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showSavedLabel()
+            }
+            .store(in: &subscriptions)
+        
         output.subscriptions.forEach {
             $0.store(in: &subscriptions)
         }
@@ -126,5 +134,36 @@ class ViewController: UIViewController {
         let okAction = UIAlertAction(title: "Ok", style: .default)
         alert.addAction(okAction)
         present(alert, animated: true)
+    }
+    
+    // MARK: - Saved Label
+    private func savedLabelVisibility(_ isVisible: Bool) {
+        savedLabel.alpha = isVisible ? 1 : 0
+    }
+    
+    // MARK: - Animations
+    private func showSavedLabel() {
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 0,
+            options: .beginFromCurrentState,
+            animations: { [weak self] in
+                self?.savedLabel.alpha = 1.0
+            },
+            completion: { [weak self] completed in
+                guard completed else { return }
+                self?.hideSavedLabel()
+            }
+        )
+    }
+    
+    private func hideSavedLabel() {
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 1.0,
+            animations: { [weak self] in
+                self?.savedLabel.alpha = 0
+            }
+        )
     }
 }

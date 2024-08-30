@@ -32,6 +32,7 @@ class RobohashViewModel: ViewModelBinding {
         let openURL: AnyPublisher<URL, Never>
         let setOptions: AnyPublisher<[String], Never>
         let errorAlert: AnyPublisher<String, Never>
+        let savedAlert: AnyPublisher<Void, Never>
         let subscriptions: Set<AnyCancellable>
     }
     
@@ -86,6 +87,7 @@ class RobohashViewModel: ViewModelBinding {
             .map { PHPhotoLibrary.authorizationStatus(for: .addOnly).canPromptSave }
             .eraseToAnyPublisher()
         let saveError = PassthroughSubject<String, Never>()
+        let savedAlert = PassthroughSubject<Void, Never>()
         
         let saveSubscription = input.saveTap
             .withLatestFrom(robohashResult.compactMap(\.imageValue))
@@ -93,6 +95,7 @@ class RobohashViewModel: ViewModelBinding {
                 Self.save(
                     image: image,
                     triggerPermissionsCheck: triggerPermissionsCheck,
+                    savedAlert: savedAlert,
                     errorAlert: saveError
                 )
             }
@@ -124,6 +127,7 @@ class RobohashViewModel: ViewModelBinding {
             openURL: copyrightURL,
             setOptions: setOptionsNames,
             errorAlert: errors,
+            savedAlert: savedAlert.eraseToAnyPublisher(),
             subscriptions: [saveSubscription]
         )
     }
@@ -140,12 +144,16 @@ class RobohashViewModel: ViewModelBinding {
     private static func save(
         image: UIImage,
         triggerPermissionsCheck: any Subject<Void, Never>,
+        savedAlert: any Subject<Void, Never>,
         errorAlert: any Subject<String, Never>
     ) {
         PHPhotoLibrary.shared().performChanges {
             _ = PHAssetChangeRequest.creationRequestForAsset(from: image)
         } completionHandler: { success, error in
-            guard let error else { return }
+            guard let error else {
+                savedAlert.send()
+                return
+            }
             triggerPermissionsCheck.send()
             errorAlert.send(error.localizedDescription)
         }
