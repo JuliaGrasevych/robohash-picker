@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import UIKit
 import Combine
+import Photos
 
 protocol ViewModelBinding {
     associatedtype Input
@@ -19,15 +21,19 @@ class RobohashViewModel: ViewModelBinding {
     struct Input {
         let enteredText: AnyPublisher<String?, Never>
         let generateTap: AnyPublisher<Void, Never>
+        let saveTap: AnyPublisher<Void, Never>
         let copyrightTap: AnyPublisher<Void, Never>
         let selectedSetIndex: AnyPublisher<Int, Never>
     }
     struct Output {
         let generateButtonEnabled: AnyPublisher<Bool, Never>
+        let saveButtonEnabled: AnyPublisher<Bool, Never>
         let robohashCreation: AnyPublisher<RobohashCreation, Never>
         let openURL: AnyPublisher<URL, Never>
         let setOptions: AnyPublisher<[String], Never>
         let errorAlert: AnyPublisher<String, Never>
+        let savedAlert: AnyPublisher<Void, Never>
+        let subscriptions: Set<AnyCancellable>
     }
     
     private let robohashFetcher = RobohashFetcher()
@@ -75,6 +81,31 @@ class RobohashViewModel: ViewModelBinding {
             }
             .eraseToAnyPublisher()
         
+        let triggerPermissionsCheck = PassthroughSubject<Void, Never>()
+        let photoLibraryPermissionStatus = triggerPermissionsCheck
+            .prepend(())
+            .map { PHPhotoLibrary.authorizationStatus(for: .addOnly).canPromptSave }
+            .eraseToAnyPublisher()
+        let saveError = PassthroughSubject<String, Never>()
+        let savedAlert = PassthroughSubject<Void, Never>()
+        
+        let saveSubscription = input.saveTap
+            .withLatestFrom(robohashResult.compactMap(\.imageValue))
+            .sink { _, image in
+                Self.save(
+                    image: image,
+                    triggerPermissionsCheck: triggerPermissionsCheck,
+                    savedAlert: savedAlert,
+                    errorAlert: saveError
+                )
+            }
+        
+        let saveButtonEnabled = robohashRequest
+            .combineLatest(photoLibraryPermissionStatus)
+            .map(Self.isSaveAvailable)
+            .prepend(Just(false))
+            .eraseToAnyPublisher()
+        
         let generateButtonEnabled = input.enteredText
             .map { text in
                 !(text?.isEmpty ?? true)
@@ -86,13 +117,46 @@ class RobohashViewModel: ViewModelBinding {
             .compactMap { URL(string: "https://robohash.org/") }
             .eraseToAnyPublisher()
         
+        let errors = robohashRequestError.merge(with: saveError)
+            .eraseToAnyPublisher()
+        
         return Output(
             generateButtonEnabled: generateButtonEnabled,
+            saveButtonEnabled: saveButtonEnabled,
             robohashCreation: robohashResult,
             openURL: copyrightURL,
             setOptions: setOptionsNames,
-            errorAlert: robohashRequestError
+            errorAlert: errors,
+            savedAlert: savedAlert.eraseToAnyPublisher(),
+            subscriptions: [saveSubscription]
         )
+    }
+    
+    private static func isSaveAvailable(for requestResult: Result<RobohashCreation, Error>, permissionStatus: Bool) -> Bool {
+        switch requestResult {
+        case .success(let value):
+            return value.imageValue == nil ? false : permissionStatus
+        case .failure:
+            return false
+        }
+    }
+    
+    private static func save(
+        image: UIImage,
+        triggerPermissionsCheck: any Subject<Void, Never>,
+        savedAlert: any Subject<Void, Never>,
+        errorAlert: any Subject<String, Never>
+    ) {
+        PHPhotoLibrary.shared().performChanges {
+            _ = PHAssetChangeRequest.creationRequestForAsset(from: image)
+        } completionHandler: { success, error in
+            guard let error else {
+                savedAlert.send()
+                return
+            }
+            triggerPermissionsCheck.send()
+            errorAlert.send(error.localizedDescription)
+        }
     }
 }
 
@@ -109,6 +173,33 @@ private extension RobohashSet {
             return "Kitten"
         case .human:
             return "Human"
+        }
+    }
+}
+
+private extension PHAuthorizationStatus {
+    var canPromptSave: Bool {
+        switch self {
+        case .notDetermined,
+                .authorized:
+            return true
+        case .restricted,
+                .denied,
+                .limited:
+            return false
+        @unknown default:
+            return false
+        }
+    }
+}
+
+private extension RobohashCreation {
+    var imageValue: UIImage? {
+        switch image {
+        case .loaded(let image):
+            return image
+        case .loading, .failed:
+            return nil
         }
     }
 }

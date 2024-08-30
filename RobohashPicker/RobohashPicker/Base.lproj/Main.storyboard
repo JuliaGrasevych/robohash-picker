@@ -5,6 +5,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -51,7 +52,7 @@
                                         </state>
                                     </button>
                                     <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="7Z3-Tq-Ubc">
-                                        <rect key="frame" x="0.0" y="38.333333333333314" width="377" height="32"/>
+                                        <rect key="frame" x="0.0" y="38.333333333333329" width="377" height="32"/>
                                         <segments>
                                             <segment title="First"/>
                                             <segment title="Second"/>
@@ -67,8 +68,24 @@
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="Generate"/>
                                     </button>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="JZC-zJ-amW">
+                                        <rect key="frame" x="0.0" y="161.66666666666666" width="377" height="34.333333333333343"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Saved!" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u7B-9l-Nzh">
+                                                <rect key="frame" x="0.0" y="0.0" width="320.66666666666669" height="34.333333333333336"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" systemColor="systemGreenColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mea-Eu-ZL7">
+                                                <rect key="frame" x="328.66666666666669" y="0.0" width="48.333333333333314" height="34.333333333333336"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" image="square.and.arrow.down" catalog="system"/>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wdo-Kw-mdh" customClass="RobohashView" customModule="RobohashPicker" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="161.66666666666669" width="377" height="529.33333333333326"/>
+                                        <rect key="frame" x="0.0" y="204" width="377" height="487"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
@@ -87,6 +104,8 @@
                         <outlet property="copyright" destination="Vb2-XZ-Ak7" id="gaH-N4-taJ"/>
                         <outlet property="generateButton" destination="KXw-GZ-ifP" id="f3E-kT-Oje"/>
                         <outlet property="robohashView" destination="wdo-Kw-mdh" id="3Ek-Uz-9vM"/>
+                        <outlet property="saveButton" destination="Mea-Eu-ZL7" id="r1O-uU-pYZ"/>
+                        <outlet property="savedLabel" destination="u7B-9l-Nzh" id="a6X-SN-hao"/>
                         <outlet property="setControl" destination="7Z3-Tq-Ubc" id="R3e-ae-bLo"/>
                         <outlet property="textField" destination="xg6-pp-6ga" id="J7f-2Q-KTn"/>
                     </connections>
@@ -96,4 +115,10 @@
             <point key="canvasLocation" x="140" y="19"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="square.and.arrow.down" catalog="system" width="112" height="128"/>
+        <systemColor name="systemGreenColor">
+            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>
